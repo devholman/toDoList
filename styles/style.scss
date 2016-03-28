@@ -1,16 +1,6 @@
 @import "../bower_components/normalize-scss/_normalize.scss";
 @import "../bower_components/typeplate-starter-kit/scss/_typeplate.scss";
 
-p+p {
-    text-indent: 0;
-    margin-top: 0;
-}
-
-p {
-    max-width: 80ch;
-    margin-left: 0;
-    margin-right: auto;
-}
 
 ul, ol {
     max-width: 80ch;
@@ -127,3 +117,77 @@ body {
 /**
  * App code
  */
+
+.container{
+    background: darkseagreen;
+    padding: 2%;
+}
+
+.content-container{
+    background:beige;
+    padding: 5%;
+
+    div{
+        margin:auto 15%;
+    }
+}
+
+.search-bar{
+    outline: none;
+    margin: 10% 39%;
+}
+
+.item-container{
+    text-align: left;
+    border: 1px solid;
+    justify-content: space-between;
+    max-width: 700px;
+    font-family: sans-serif;
+    display: flex;
+
+        p{
+            display: inline-block;
+            padding: 5%;
+            margin: 0;
+        }
+
+        button{
+            background-color: lightslategray;
+            border: .1rem solid lightslategray;
+            border-radius: .4rem;
+            color: #fff;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 0.1rem;
+            font-weight: 700;
+            height: 2.8rem;
+            letter-spacing: 0.1rem;
+            line-height: inherit;
+            padding: 0rem 1rem;
+            margin-top: 4%;
+            /* text-align: right; */
+            text-decoration: none;
+            text-transform: uppercase;
+            white-space: nowrap;
+
+        }
+
+        .item-butt-container{
+            margin: 2%;
+            display: inline-block;
+            width: 160px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+
+            button{
+                padding: 5%;
+                margin: 2%;
+            }
+        }
+
+        // button.done-button + p.item-text:visited{ // is it possible to make this work?
+        //     // text-decoration: line-through;
+        //     background-color: red;
+        // }
+ }
