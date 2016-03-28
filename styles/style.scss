@@ -128,7 +128,7 @@ body {
     padding: 5%;
 
     div{
-        margin:auto 15%;
+        margin:auto 5%;
     }
 }
 
@@ -175,7 +175,6 @@ body {
         .item-butt-container{
             margin: 2%;
             display: inline-block;
-            width: 160px;
             text-align: center;
             display: flex;
             align-items: center;
@@ -186,8 +185,8 @@ body {
             }
         }
 
-        // button.done-button + p.item-text:visited{ // is it possible to make this work?
-        //     // text-decoration: line-through;
-        //     background-color: red;
-        // }
+        p.item-text.completed{ // is it possible to make this work?
+           text-decoration: line-through;
+           opacity: .3;
+        }
  }

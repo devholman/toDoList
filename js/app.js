@@ -63,7 +63,8 @@ function app() {
 
     var ListingModel = Backbone.Model.extend({
     	defaults: {
-    		status:"To Do"
+    		status:"To Do",
+    		done: false
     	},
 
     	initialize: function(newItem){
@@ -165,9 +166,8 @@ function app() {
     		// console.log("From Controller:", this.props.doData)
     		
     		return(
-    			<div>
-    				{this.props.doData.map(this._makeItem)}
-    			</div>
+    			{this.props.doData.map(this._makeItem)}
+    			
     		)
     	}
 
@@ -175,27 +175,18 @@ function app() {
 
     var ToDoItem = React.createClass({
 
-    	getInitialState: function(){
-    		return{
-    			isDone: false
-    		}
-    	},
 
     	_clickHandler: function(){
     		this.props.remover(this.props.item)
     	},
 
     	_lineThrough: function(){
-    		if(this.state.isDone){ //if false
-    			this.setState({
-    				isDone:false
-    			})
+    		if(this.props.item.get("done")){ //if false
+    			this.props.item.set({"done":false})
     		}else{
-    			this.setState({
-    				isDone:true
-    			})
-    		}
-    		// this.props.updater()
+    			this.props.item.set({"done":true})
+    			}
+    		this.props.updater()
     	},
 
     	// _selectStatus: function(event){
@@ -206,23 +197,22 @@ function app() {
 
     	render: function(){
     		// console.log("to do item", this)
-    		var btnTxt, lineThru
+    		var btnTxt,
+    			itemTxtCssClass = "item-text"
 
-    		if(this.state.isDone){
+    		if(this.props.item.get("done")){
     			btnTxt="Not Done"
-    			// lineThru={"text-decoration":"line-through"}
-    			lineThru={background:"red"}
-
+    		}
+    			itemTxtCssClass += "completed"  // className="item-text completed"
     		}else{
-    			btnTxt="Done"
-    			lineThru={background: "red"}
+    			btnTxt="Mark as Done"
     		}
 
     		return(
 	    			<div className="item-container">
-	    				<p className="item-text">{this.props.item.get("newItem")}</p>
+	    				<p className={itemTxtCssClass} >{this.props.item.get("newItem")}</p>
 	    				<div className="item-butt-container">
-	    					<button className="done-button" onClick={this._lineThrough}>{btnTxt}</button>
+	    					<button className="done-button" onClick  ={this._lineThrough}>{btnTxt}</button>
 	    					<button className="remove-button" onClick={this._clickHandler}>Remove</button>
 	    				</div>
 	    			</div>
