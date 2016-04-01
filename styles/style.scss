@@ -118,15 +118,38 @@ body {
  * App code
  */
 
+ //****//*********// VARIABLES //************//
+$borderColor: darkseagreen;
+
+
 .container{
-    background: darkseagreen;
+    background: $borderColor;
     padding: 2%;
 }
 
 .content-container{
     background:beige;
     padding: 5%;
+}
 
+.header-container{
+    h2{
+        font-family: 'Yellowtail', cursive;
+        text-align: center;
+    }
+}
+
+.view-buttons{
+    text-align: center;
+    color:black;
+
+    button{
+        font-family: 'Yellowtail', cursive;
+        background:transparent;
+        color:black;
+        border:$borderColor;
+    }
+    
     div{
         margin:auto 5%;
     }
@@ -134,19 +157,43 @@ body {
 
 .search-bar{
     outline: none;
-    margin: 10% 39%;
+    margin: 5% 39%;
+    border:$borderColor;
+    font-family: 'Yellowtail';
+    background: transparent;
+    border-bottom: 1px solid;
+    // text-align: center;
+    animation: blink-empty 1s;
+        
+}
+
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  text-align: center;
+}
+::-moz-placeholder { /* Firefox 19+ */
+  text-align: center;
+}
+:-ms-input-placeholder { /* IE 10+ */
+  text-align: center;
+}
+:-moz-placeholder { /* Firefox 18- */
+  text-align: center;
+}
+
+.item-container-container{
+    width: 100%;
 }
 
 .item-container{
     text-align: left;
-    border: 1px solid;
+    border: 1px solid $borderColor;
     justify-content: space-between;
     max-width: 700px;
     font-family: sans-serif;
     display: flex;
+    margin:auto;
 
         p{
-            display: inline-block;
             padding: 5%;
             margin: 0;
         }
@@ -168,24 +215,23 @@ body {
             /* text-align: right; */
             text-decoration: none;
             text-transform: uppercase;
-            white-space: nowrap;
+            white-space: nowrap; 
+
 
         }
 
         .item-butt-container{
-            margin: 2%;
-            display: inline-block;
-            text-align: center;
-            display: flex;
-            align-items: center;
+
+            text-align: right;
+            width:240px;
 
             button{
                 padding: 5%;
-                margin: 2%;
+                margin:14% 2%;
             }
         }
 
-        p.item-text.completed{ // is it possible to make this work?
+        p.item-text.completed{ 
            text-decoration: line-through;
            opacity: .3;
         }

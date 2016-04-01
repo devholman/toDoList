@@ -35,6 +35,9 @@ import fetch from "isomorphic-fetch"
 import Backbone from 'backbone'
 import $ from 'jquery'
 import _ from 'underscore'
+import BackboneFire from 'bbfire'
+
+
 
 import DOM from 'react-dom'
 import React, {Component} from 'react'
@@ -53,10 +56,24 @@ function app() {
     	},
 
     	handleAll: function() {
-    		DOM.render(<ToDoViewController toDoData={new ListingCollection()}/>, document.querySelector('.container'))
+    		var ToDoCollection = new ListingCollection()
+ 
+    		DOM.render(<ToDoViewController toDoData={new ListingCollection() } theList={ToDoCollection}/>, document.querySelector('.container'))
     	},
 
     	initialize: function(){
+    		// console.log(BackboneFire)
+
+    		// var UserCollection = BackboneFire.Firebase.Collection.extend({
+    		// 	url: "https://todo4u.firebaseio.com/"
+    		// })
+    		// var myCollection = new UserCollection()
+
+    		// myCollection.on("sync", function(){
+    		// 	console.log(myCollection)
+    		// })
+
+
     		Backbone.history.start();
     	}
     })
@@ -65,25 +82,37 @@ function app() {
     	defaults: {
     		status:"To Do",
     		done: false
-    	},
-
-    	initialize: function(newItem){
-    		this.set({newItem: newItem})
     	}
     })
 
-    var ListingCollection = Backbone.Collection.extend({
-    	model: ListingModel
+    var ListingCollection = BackboneFire.Firebase.Collection.extend({
+    	model: ListingModel,
+    	url: "https://devynstodo.firebaseio.com/stilltodo/"
     })
+
+    // var newCollection = new ListingCollection()
+    // var mod = new ListingModel({id: "devyn"}) 
+    // console.log(mod)
+    // var mod2 = new ListingModel() 
+    // mod2.set({id:'boaz'})
+    // console.log(mod2)
+    // newCollection.add(mod)
+    // newCollection.add(mod2)
+
 
     var ToDoViewController = React.createClass({
     		
-    		_addItem: function(newItem){
-    			this.state.toDoData.add(new ListingModel(newItem))
+    		_addItem: function(taskText){
+    			this.state.toDoData.add({task:taskText})
 
     			this.setState({  //how is this passed down to the props on toDoList???
     				toDoData: this.state.toDoData
     			})
+    		},
+
+    		comonentWillMount:function(){
+    			var self = this
+    			this.props.theList.on('sync',function(){self.forceUpdate()})
     		},
 
     		_removeItem: function(model){
@@ -121,22 +150,33 @@ function app() {
 
     		render: function(){
     			console.log("From AppView Render:", this.props.toDoData)
-				var toDoData = this.state.toDoData
-				if(this.state.viewType === "All")   toDoData=toDoData.where({status:"all"})
-				if(this.state.viewType === "To Do") toDoData=toDoData.where({status:"To Do"})
-				if(this.state.viewType === "Done")  toDoData=toDoData.where({status:"Done"})
+				var modelsShowing = this.state.toDoData.models
+				if(this.state.viewType === "To Do") modelsShowing= this.state.toDoData.where({done: false}) //you are not done
+				if(this.state.viewType === "Done")  modelsShowing= this.state.toDoData.where({done: true}) // you are done
 
 
-
+				console.log(modelsShowing)
 
 				return(
 					<div className="content-container">
+							<Header />
+							<ItemAdder adderFunc={this._addItem} updater={this._updater} theList={this.props.theList}/>
 							<div className="view-buttons">{this._genButtons()}</div>
-							<ItemAdder adderFunc={this._addItem}/>
-							<ToDoList doData={this.state.toDoData} updater={this._updater} remover={this._removeItem}/>
+							<ToDoList doData={modelsShowing} updater={this._updater} remover={this._removeItem} />
 					</div>
 				)
 			}
+    })
+    var Header = React.createClass({
+    	render:function(){
+    		return(
+    			<div className="header-container">
+    				<h2>Super Simple To Do List</h2>
+    			</div>
+    		)
+
+    	}
+
     })
 
     var ItemAdder = React.createClass({
@@ -151,7 +191,7 @@ function app() {
 
     	render: function(){
     		return(
-    			<input className="search-bar" onKeyDown={this._handleKeyDown}></input>
+    			<input className="search-bar" placeholder="Type in a Task" onKeyDown={this._handleKeyDown}></input>
     		)
     	}
     })
@@ -159,15 +199,16 @@ function app() {
     var ToDoList = React.createClass({
     	
     	_makeItem: function(model,index){
-    		return <ToDoItem key={index} item={model} updater = {this.props.updater} remover={this.props.remover}/>
+    		return <ToDoItem key={index} item={model} updater={this.props.updater} remover={this.props.remover} />
     	},
 
     	render: function(){
     		// console.log("From Controller:", this.props.doData)
     		
     		return(
-    			{this.props.doData.map(this._makeItem)}
-    			
+    			<div className="item-container-container">
+    				{this.props.doData.map(this._makeItem)}
+    			</div>
     		)
     	}
 
@@ -181,38 +222,34 @@ function app() {
     	},
 
     	_lineThrough: function(){
-    		if(this.props.item.get("done")){ //if false
+    		if(this.props.item.get("done")){ //if false - you are not done
     			this.props.item.set({"done":false})
     		}else{
-    			this.props.item.set({"done":true})
+    			this.props.item.set({"done":true}) // you are done
     			}
     		this.props.updater()
     	},
 
-    	// _selectStatus: function(event){
-    	// 	var newStat = event.target.value
-    	// 	this.props.item.set({status:newStat})
-    	// 	this.props.updater()
-    	// },
-
     	render: function(){
     		// console.log("to do item", this)
+
     		var btnTxt,
     			itemTxtCssClass = "item-text"
 
-    		if(this.props.item.get("done")){
+    		if(this.props.item.get("done")){ //done -- done is false or you are not done
     			btnTxt="Not Done"
-    		}
-    			itemTxtCssClass += "completed"  // className="item-text completed"
-    		}else{
-    			btnTxt="Mark as Done"
+    			itemTxtCssClass += " completed"  // className="item-text completed"
+
+       		}else{
+    			btnTxt="Mark as Done"  // you are done
     		}
 
+    		console.log(this)
     		return(
 	    			<div className="item-container">
-	    				<p className={itemTxtCssClass} >{this.props.item.get("newItem")}</p>
+	    				<p className={itemTxtCssClass}>{this.props.item.get("task")}</p>
 	    				<div className="item-butt-container">
-	    					<button className="done-button" onClick  ={this._lineThrough}>{btnTxt}</button>
+	    					<button className="done-button"  onClick ={this._lineThrough}>{btnTxt}</button>
 	    					<button className="remove-button" onClick={this._clickHandler}>Remove</button>
 	    				</div>
 	    			</div>
