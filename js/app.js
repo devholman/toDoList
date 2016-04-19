@@ -50,7 +50,7 @@ function app() {
     var ToDoRouter = Backbone.Router.extend({
     	routes: {
     		"all" 	  : "handleAll",
-    		"yes" 	  : "handleYes",
+    		"yes" 	  : "handleYes", 
     		"no"  	  : "handleNo",
     		"*Default": "handleAll"
     	},
@@ -58,7 +58,7 @@ function app() {
     	handleAll: function() {
     		var ToDoCollection = new ListingCollection()
  
-    		DOM.render(<ToDoViewController toDoData={new ListingCollection() } theList={ToDoCollection}/>, document.querySelector('.container'))
+    		DOM.render(<ToDoViewController toDoData={new ListingCollection() }/>, document.querySelector('.container'))
     	},
 
     	initialize: function(){
@@ -112,7 +112,7 @@ function app() {
 
     		comonentWillMount:function(){
     			var self = this
-    			this.props.theList.on('sync',function(){self.forceUpdate()})
+    			this.props.toDoData.on('sync',function(){self.forceUpdate()})
     		},
 
     		_removeItem: function(model){
@@ -160,7 +160,7 @@ function app() {
 				return(
 					<div className="content-container">
 							<Header />
-							<ItemAdder adderFunc={this._addItem} updater={this._updater} theList={this.props.theList}/>
+							<ItemAdder adderFunc={this._addItem} updater={this._updater} />
 							<div className="view-buttons">{this._genButtons()}</div>
 							<ToDoList doData={modelsShowing} updater={this._updater} remover={this._removeItem} />
 					</div>
